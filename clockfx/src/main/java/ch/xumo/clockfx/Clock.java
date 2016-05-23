@@ -19,6 +19,7 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeType;
 import javafx.util.Duration;
+import javafx.util.Pair;
 
 public class Clock extends Region {
 
@@ -74,15 +75,15 @@ public class Clock extends Region {
 				}
 			}
 
-			private void animate(final StartEndPoints startEndPoints, final Tuple<Point2D> points) {
+			private void animate(final StartEndPoints startEndPoints, final Pair<Point2D, Point2D> points) {
 				final KeyFrame startX = new KeyFrame(duration,
-						new KeyValue(startEndPoints.getStartX(), points.getFirstEntry().getX()));
+						new KeyValue(startEndPoints.getStartX(), points.getKey().getX()));
 				final KeyFrame startY = new KeyFrame(duration,
-						new KeyValue(startEndPoints.getStartY(), points.getFirstEntry().getY()));
+						new KeyValue(startEndPoints.getStartY(), points.getKey().getY()));
 				final KeyFrame endX = new KeyFrame(duration,
-						new KeyValue(startEndPoints.getEndX(), points.getSecondEntry().getX()));
+						new KeyValue(startEndPoints.getEndX(), points.getValue().getX()));
 				final KeyFrame endY = new KeyFrame(duration,
-						new KeyValue(startEndPoints.getEndY(), points.getSecondEntry().getY()));
+						new KeyValue(startEndPoints.getEndY(), points.getValue().getY()));
 
 				final Timeline timeline = new Timeline();
 				timeline.getKeyFrames().addAll(startX, startY, endX, endY);
@@ -97,26 +98,26 @@ public class Clock extends Region {
 		hours.update(hourPoints(localTime));
 	}
 
-	private Tuple<Point2D> secondPoints(final LocalTime localTime) {
+	private Pair<Point2D, Point2D> secondPoints(final LocalTime localTime) {
 		return timeToPoints(localTime, lt -> TimeGeometry.calculateSecondAngleDegrees(lt), 0.2, 0.7);
 	}
 
-	private Tuple<Point2D> minutePoints(final LocalTime localTime) {
+	private Pair<Point2D, Point2D> minutePoints(final LocalTime localTime) {
 		return timeToPoints(localTime, lt -> TimeGeometry.calculateMinuteAngleDegrees(lt), 0.15, 0.98);
 	}
 
-	private Tuple<Point2D> hourPoints(final LocalTime localTime) {
+	private Pair<Point2D, Point2D> hourPoints(final LocalTime localTime) {
 		return timeToPoints(localTime, lt -> TimeGeometry.calculateHourAngleDegrees(lt), 0.15, 0.75);
 	}
 
-	private Tuple<Point2D> timeToPoints(final LocalTime localTime, final Function<LocalTime, Double> toDegrees,
+	private Pair<Point2D, Point2D> timeToPoints(final LocalTime localTime, final Function<LocalTime, Double> toDegrees,
 			final double startFactor, final double endFactor) {
 		final double secondAngleDegrees = toDegrees.apply(localTime);
 		final Point2D secondStartPoint = TimeGeometry.toPointOnUnitCircle(secondAngleDegrees)
 				.multiply(-RADIUS * startFactor).add(RADIUS, RADIUS);
 		final Point2D secondEndPoint = TimeGeometry.toPointOnUnitCircle(secondAngleDegrees).multiply(RADIUS * endFactor)
 				.add(RADIUS, RADIUS);
-		return new Tuple<>(secondStartPoint, secondEndPoint);
+		return new Pair<>(secondStartPoint, secondEndPoint);
 	}
 
 	private static final Color COLOR_SECOND = Color.FIREBRICK;

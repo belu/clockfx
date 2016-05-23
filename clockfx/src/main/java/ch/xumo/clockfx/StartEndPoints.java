@@ -3,6 +3,7 @@ package ch.xumo.clockfx;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Point2D;
+import javafx.util.Pair;
 
 public class StartEndPoints {
 
@@ -11,11 +12,11 @@ public class StartEndPoints {
 	private final DoubleProperty endX = new SimpleDoubleProperty();
 	private final DoubleProperty endY = new SimpleDoubleProperty();
 
-	public void update(final Tuple<Point2D> startEndPoints) {
-		startX.set(startEndPoints.getFirstEntry().getX());
-		startY.set(startEndPoints.getFirstEntry().getY());
-		endX.set(startEndPoints.getSecondEntry().getX());
-		endY.set(startEndPoints.getSecondEntry().getY());
+	public void update(final Pair<Point2D, Point2D> startEndPoints) {
+		startX.set(startEndPoints.getKey().getX());
+		startY.set(startEndPoints.getKey().getY());
+		endX.set(startEndPoints.getValue().getX());
+		endY.set(startEndPoints.getValue().getY());
 	}
 
 	public DoubleProperty getStartX() {
